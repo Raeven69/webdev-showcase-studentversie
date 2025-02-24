@@ -60,7 +60,7 @@ class GDPR {
 
     cookieStatus(status) {
         if (status) {
-            this.setCookie("gdpr-consent-choice", status);
+            document.cookie = `gdpr-consent-choice=${status};path=/`;
         }
         return this.getCookie("gdpr-consent-choice");
     }
@@ -71,15 +71,6 @@ class GDPR {
             .map(cookie => cookie.trim())
             .find(cookie => cookie.startsWith(`${key}=`))
             ?.split("=")[1] ?? null;
-    }
-
-    setCookie(key, value) {
-        var cookies = document.cookie
-            .split(";")
-            .map(cookie => cookie.trim())
-            .filter(cookie => !cookie.startsWith(`${key}=`) && cookie.length > 0);
-        cookies.push(`${key}=${value}`);
-        document.cookie = cookies.join(";");
     }
 
 

@@ -6,7 +6,7 @@
 <div class="page">
     <section class="contact">
 
-        <h1>Contact</h1>
+        <h1>Stuur een bericht naar Raeven van Dijk</h1>
         <p>@ViewBag.Message</p>
         <form method="post" class="form-contactpagina">
 
@@ -26,19 +26,30 @@
             </div>
 
             <div class="form-contactpagina__inputelement fx-col">
+                <label for="subject">Onderwerp: </label>
+                <input type="subject" asp-for="Subject" name="subject" id="subject">
+            </div>
+
+            <div class="form-contactpagina__inputelement fx-col">
                 <label for="phone">Telefoonnummer: </label>
                 <input type="tel" asp-for="Phone" name="phone" id="phone">
             </div>
 
+            <div class="form-contactpagina__inputelement fx-col">
+                <label for="message">Bericht: </label>
+                <textarea type="text" asp-for="Message" name="message" id="message"></textarea>
+            </div>
+
+            <div class="g-recaptcha" data-sitekey="6LfSH-EqAAAAAAKqFFH078aXpVkhR2wu5zWQ5uC5"></div>
+
             <div class="form-contactpagina__inputelement">
                 <input type="submit" value="Verstuur!">
             </div>
-
         </form>
 
     </section>
 </div>
-
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 <script>
 //    const inputEmail = document.getElementById('email');

@@ -26,9 +26,10 @@ namespace ShowcaseAPI.Controllers
 
         // POST api/<MailController>
         [HttpPost]
-        public ActionResult Post([Bind("FirstName, LastName, Email, Phone")] Contactform form)
+        public ActionResult Post([Bind("FirstName, LastName, Email, Subject, Phone, Message")] Contactform form, [FromForm] string captcha)
         {
-            client.Send(form.Email, smtp.GetValue<string>("DefaultEmail")!, "Bericht", $"Berichtje van {form.FirstName} {form.LastName} met telefoonnummer {form.Phone}");
+            Console.WriteLine(captcha);
+            client.Send(form.Email, smtp.GetValue<string>("DefaultEmail")!, form.Subject, $"{form.Message}\n\n{form.FirstName} {form.LastName}\n{form.Phone}");
             return Ok();
         }
     }
