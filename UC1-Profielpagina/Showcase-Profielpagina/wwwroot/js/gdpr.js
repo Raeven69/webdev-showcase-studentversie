@@ -1,25 +1,33 @@
 class GDPR {
 
     constructor() {
-        this.showStatus();
-        this.showContent();
+        if (document.getElementById('content-gpdr-consent-status')) {
+            this.showStatus();
+            this.showContent();
+        }
         this.bindEvents();
-
-        if(this.cookieStatus() !== 'accept') this.showGDPR();
+        if (this.cookieStatus() !== 'accept') this.showGDPR();
     }
 
     bindEvents() {
         let buttonAccept = document.querySelector('.gdpr-consent__button--accept');
         buttonAccept.addEventListener('click', () => {
             this.cookieStatus('accept');
-            this.showStatus();
-            this.showContent();
+            if (document.getElementById('content-gpdr-consent-status')) {
+                this.showStatus();
+                this.showContent();
+            }
             this.hideGDPR();
         });
-
-
-//student uitwerking
-
+        let buttonDecline = document.querySelector(".gdpr-consent__button--reject");
+        buttonDecline.addEventListener("click", () => {
+            this.cookieStatus("reject");
+            if (document.getElementById('content-gpdr-consent-status')) {
+                this.showStatus();
+                this.showContent();
+            }
+            this.hideGDPR();
+        })
 
     }
 
@@ -35,7 +43,7 @@ class GDPR {
         const classes = [
             '.content-gdpr-accept',
 
-//student uitwerking
+            ".content-gdpr-reject",
 
             '.content-gdpr-not-chosen'];
 
@@ -51,15 +59,28 @@ class GDPR {
     }
 
     cookieStatus(status) {
-
-        if (status) localStorage.setItem('gdpr-consent-choice', status);
-
-//student uitwerking
-
-        return localStorage.getItem('gdpr-consent-choice');
+        if (status) {
+            this.setCookie("gdpr-consent-choice", status);
+        }
+        return this.getCookie("gdpr-consent-choice");
     }
 
-//student uitwerking
+    getCookie(key) {
+        return document.cookie
+            .split(";")
+            .map(cookie => cookie.trim())
+            .find(cookie => cookie.startsWith(`${key}=`))
+            ?.split("=")[1] ?? null;
+    }
+
+    setCookie(key, value) {
+        var cookies = document.cookie
+            .split(";")
+            .map(cookie => cookie.trim())
+            .filter(cookie => !cookie.startsWith(`${key}=`) && cookie.length > 0);
+        cookies.push(`${key}=${value}`);
+        document.cookie = cookies.join(";");
+    }
 
 
     hideGDPR(){
