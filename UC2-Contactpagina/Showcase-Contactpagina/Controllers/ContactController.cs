@@ -13,16 +13,30 @@ namespace Showcase_Contactpagina.Controllers
     public class ContactController : Controller
     {
         private readonly HttpClient _httpClient;
-        public ContactController(HttpClient httpClient)
+        private readonly string recaptcha;
+        public ContactController(HttpClient httpClient, IConfiguration config)
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri("https://localhost:7278");
+            recaptcha = config.GetSection("Recaptcha").GetValue<string>("Secret")!;
         }
 
         // GET: ContactController
         public ActionResult Index()
         {
             return View();
+        }
+
+        public async Task<bool> CheckCaptcha(string captcha)
+        {
+            var response = await _httpClient.PostAsync($"https://www.google.com/recaptcha/api/siteverify?secret={recaptcha}&response={captcha}", null);
+            if (!response.IsSuccessStatusCode)
+            {
+                return false;
+            }
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            dynamic result = JsonConvert.DeserializeObject(jsonResponse)!;
+            return result.success == "true";
         }
 
         // POST: ContactController
@@ -35,6 +49,13 @@ namespace Showcase_Contactpagina.Controllers
                 ViewBag.Message = "De ingevulde velden voldoen niet aan de gestelde voorwaarden";
                 return View();
             }
+
+            if (!await CheckCaptcha(Request.Form["g-recaptcha-response"]!))
+            {
+                ViewBag.Message = "Captcha mislukt.";
+                return View();
+            }
+
 
             var settings = new JsonSerializerSettings
             {
